@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fei Wang</title>
+  <meta name="description" content="Fei Wang — Postdoc." />
+  <link rel="preload" as="image" href="me.png" />
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      color: #111;
+      font-family: -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+
+    .head {
+      text-align: center;
+    }
+
+    .head img {
+      width: 140px;
+      height: 140px;
+      border-radius: 8px;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 20px;
+      transition: filter 220ms ease, opacity 220ms ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      background-color: #f5f5f5;
+      background-image: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    }
+
+    .head img.blur {
+      filter: blur(10px);
+      opacity: 0.8;
+    }
+
+    .head img.loaded {
+      filter: none;
+      opacity: 1;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+      font-weight: 600;
+    }
+
+    .tag {
+      margin: 0 0 16px 0;
+      color: #555;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .links a {
+      margin: 0;
+      color: #111;
+      text-decoration: none;
+      transition: all 200ms ease;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1.2;
+      font-weight: 400;
+      padding: 4px 0;
+    }
+
+
+
+    .links a:hover {
+      color: #333;
+      transform: translateY(-1px);
+    }
+
+    .links a.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .links a:focus-visible {
+      outline: 2px solid #111;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+
+/* 
+    .terminal {
+      display: block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #0f1117;
+      color: #e6e7eb;
+      border: 1px solid #1f2330;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 8px;
+      max-height: 360px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      line-height: 1.45;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      hyphens: auto;
+    }. */
+
+
+    .terminal {
+      display: block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: #0f1117;
+      color: #e6e7eb;
+      border: 1px solid #1f2330;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 8px;
+      line-height: 1.45;
+      font-size: 14px;
+
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+
+      /* 👉 allow terminal height to grow indefinitely */
+      max-height: none;
+      height: auto;
+      overflow-y: visible; 
+      overflow-x: hidden;
+
+      width: 100%;
+      max-width: 1000px;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+
+
+    .terminal a {
+      color: #8ab4f8;
+      text-decoration: underline;
+    }
+
+    .terminal a:hover {
+      color: #cde3ff;
+    }
+
+    .terminal[hidden] {
+      display: none;
+    }
+
+    .prompt {
+      color: #6cff6c;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="head">
+      <img src="me.png" alt="Fei Wang" loading="eager" decoding="async" class="blur" />
+      <h1>Fei Wang</h1>
+      <p class="tag">Postdoctoral Researcher at University of Hertfordshirey</p>
+      <p class="links">
+        <a href="#research" data-target="research">Research</a>
+        <a href="#code" data-target="code">Code</a>
+        <a href="#publications" data-target="publications">Publications</a>
+        <a href="https://.github.io/CV.pdf" aria-label="CV" title="CV">CV↗</a>
+        <a href="#email" data-target="email">Email</a>
+      </p>
+    </div>
+    <div class="body">
+      <div id="terminal" class="terminal" aria-live="polite" hidden></div>
+    </div>
+  </div>
+
+
+
+<script>
+    (function () {
+      // Image loading and tagline
+      var hero = document.querySelector('.head img');
+      var tagEl = document.querySelector('.tag');
+
+      if (hero && hero.complete) hero.classList.add('loaded'), hero.classList.remove('blur');
+      else if (hero) hero.onload = () => (hero.classList.add('loaded'), hero.classList.remove('blur'));
+
+      if (tagEl) tagEl.innerHTML = 'Postdoctoral researcher at University of Hertfordshire<br>Research Field: Brown Dwarf and Exoplanet Atmosphere Characterization';
+
+      var terminal = document.getElementById('terminal');
+      var navLinks = document.querySelectorAll('.links a[data-target]');
+      var allTopLinks = document.querySelectorAll('.links a');
+      var typingToken = 0; // increments to cancel in-flight typing
+
+      var contentMap = {
+          research: [
+            '> open research',
+            '',
+            'Research highlights',
+            '',
+            // ---- 1 ----
+            '1. Detecting Surface Biosignatures on Earth-like Exoplanets',
+            'The vegetation red edge (VRE) is a distinct spectral signature produced by terrestrial photosynthetic vegetation and represents one of the most promising remotely detectable surface biosignatures.',
+            'We investigated the diurnal variability of disk-integrated VRE signals for Earth and Earth analogs under a range of viewing geometries. This work outlines observational strategies to enhance VRE detectability for future direct-imaging missions and demonstrates feasibility through mock observations.',
+            'IMG:biosignature.jpeg',
+            'Credit: Aaron Gronstal',
+            '',
+            // ---- 2 ----
+            '2. Inferring Atmospheric and Surface Properties of Earth Analogs via Retrievals',
+            'Direct-imaging spectra contain rich information about the atmospheres and surfaces of Earth analogs.',
+            'Using a LUVOIR-like mission concept (now HWO), we showed that combining UV (R ~ 6) and visible',
+            '(R ~ 140) flux spectra enables robust constraints on wavelength-dependent surface albedo and water cloud properties. This study demonstrates the diagnostic power of low–moderate-resolution UV-optical direct-imaging spectra for Earth-like exoplanet characterization.',
+            'IMG:Earth-like_planets_retrieval.png',
+            'SOURCE: ADAPTED FROM H.B. SMITH & C. MATHIS',
+            '',
+            // ---- 3 ----
+            '3. Thermal-Emission Spectropolarimetry of Brown Dwarfs',
+            'Emission spectroscopy is central to brown dwarf and exoplanet atmospheric studies,',
+            'but flux-only interpretations often suffer from degeneracies among temperature structure,',
+            'chemical composition, and cloud properties.',
+            'Thermal-emission spectropolarimetry provides complementary sensitivity to these features.',
+            'We quantified how temperature structures and cloud scattering properties shape polarization',
+            'spectra. Broadband polarization is dominated by cloud optical thickness, while a distinct',
+            'two-peak structure traces cloud particle sizes.',
+            'Narrow polarization features in molecular bands can probe local temperature gradients',
+            'near the photosphere. Future low-resolution (R ~ 100) spectropolarimeters at 1–2 μm with sensitivities ≤ 10⁻⁵ could detect these signatures and break degeneracies inherent to flux-only retrievals.',
+            'IMG:polarization.png',
+            '',
+            // ---- 4 ----
+            '4. Time-Resolved Retrievals for Spectral Variability',
+            'Brown dwarfs and exoplanets exhibit complex atmospheric phenomena such as clouds, storms,',
+            'and chemical inhomogeneities, which drive strong spectral variability.',
+            'JWST time-series spectroscopy now provides unprecedented data for studying these processes.',
+            'We are developing Tempawral, a data-driven, time-resolved atmospheric retrieval framework',
+            'based on eigen-spectra inversion, enabling robust and generalizable time-resolved',
+            'atmospheric characterization in the JWST era.',
+            'IMG:auroral_object.png',
+            'Artwork: NASA, ESA, CSA, Leah Hustak (STScI)',
+            '',
+            // ---- 5 ----
+            '5. Variability Mechanisms of the Auroral Brown Dwarf LSR J1835+3259',
+            'We analyzed 81 JWST/NIRISS-SOSS spectra (1–2.8 μm) of the auroral brown dwarf',
+            'LSR J1835+3259, performing retrievals on maximum and minimum variability states.',
+            'Variability arises from a combination of auroral-driven H⁻ chemistry changes, evolving',
+            'cloud vertical structure, and time-dependent alkali chemistry.',
+            'IMG:Tempawral_fig.png',
+            '',
+          ],
+
+        code: [
+          '> open code',
+          '',
+          '- Brewster_V2 - https://github.com/fwang23nh/brewster_v2',
+          '- Tempawral - https://github.com/fwang23nh/Tempawral',
+        ],
+        publications: [
+          '> open publications',
+          '',
+          'Wang, F., & He, J. (2021). <a href="https://iopscience.iop.org/article/10.3847/1538-4357/abd6ff/meta"><strong>Diurnal Variability and Detectability of Vegetation Red Edge of Earth-like Exoplanets</strong></a>. In <em>The Astrophysical Journal, 909(1), 9.</em></li>',
+          'Wang, F., Fujii, Y., & He, J. (2022). <a href="https://iopscience.iop.org/article/10.3847/1538-4357/ac67e5/meta"><strong>Unveiling Nongray Surface of Cloudy Exoplanets: The Influence of Wavelength-dependent Surface Albedo and Cloud Scattering Properties on Retrieval Solutions.</strong></a> In <em>The Astrophysical Journal, 931(1), 48.</em></li>',
+          'Wang, F., Fujii, Y., et al. (2025). <strong>On the use of polarized thermal emission to constrain cloud grain size and temperature structure of sub-stellar objects.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Wang, F., Ben, B., et al. (2025). <strong><code>Tempawral</code>: A Time-Resolved Retrieval Framework for Variable Brown Dwarfs and Exoplanet.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Wang, F., Ben, B., et al. (2025). <strong>Exploring Auroral Heating and Chemistry on a M Dwarf Using JWST/NIRISS-SOSS Time-Series Spectroscopy I: Retrieving on Extreme Amplitudes Spectra.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Wang, F., Ben, B., et al. (2025). <strong>Exploring Auroral Heating and Chemistry on an M Dwarf Using JWST/NIRISS-SOSS Time-Series Spectroscopy II: Eigen spectra retrievals with Tempawral.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Akhmetshyn, R., Artigau, É., Cowan, N. B., Plummer, M. K., <strong>Wang, F.</strong>, Burningham, B., ... & Rowe, J. F. (2025). <a href="https://iopscience.iop.org/article/10.3847/1538-4357/ae046d/meta"><strong>Mapping atmospheric features of the planetary-mass brown dwarf SIMP 0136 with JWST NIRISS</strong></a>. In <em>The Astrophysical Journal, 993(2), 237.</em></li>',
+           '',
+        ],
+
+        email: [
+          '> open email',
+          '',
+          '- fwang23nh (at) gmail (dot) com',
+          '- fwang5(at) herts (dot) ac (dot) uk'
+        ]
+      
+      };
+
+      function clearTerminal() { terminal.textContent = ''; }
+
+      function setNavDisabled(disabled) {
+        allTopLinks.forEach(link => {
+          link.classList.toggle('disabled', disabled);
+          disabled ? link.setAttribute('aria-disabled', 'true') : link.removeAttribute('aria-disabled');
+        });
+      }
+
+      function cancelTyping() {
+        typingToken++;
+        isTyping = false;
+        setNavDisabled(false);
+      }
+
+      // Typing small lines
+      function typeLines(lines, done, speed = 4) {
+        var isTyping = true;
+        setNavDisabled(true);
+        var i = 0, char = 0;
+        var myToken = ++typingToken;
+        function step() {
+          if (myToken !== typingToken) return;
+          if (i >= lines.length) {
+            isTyping = false;
+            setNavDisabled(false);
+            if (done) done();
+            return;
+          }
+
+          var line = lines[i];
+
+          // Check for large blocks (use instant rendering for large lines)
+          if (line.length > 120 || line.startsWith('> open') || line.startsWith('<ol>')) {
+            terminal.innerHTML += line + '\n';
+            i++;
+            char = 0;
+          } else {
+            if (char < line.length) {
+              terminal.textContent += line.charAt(char);
+              char++;
+            } else {
+              terminal.textContent += '\n';
+              i++;
+              char = 0;
+            }
+          }
+
+          terminal.scrollTop = terminal.scrollHeight;
+          setTimeout(step, speed);
+        }
+        step();
+      }
+
+      // Convert IMG: and links
+      function linkify() {
+        const lines = terminal.textContent.split('\n');
+        const htmlLines = lines.map(line => {
+          if (line.startsWith('IMG:')) {
+            const url = line.replace('IMG:', '').trim();
+            return `<img src="${url}" style="max-width:100%; border-radius:6px; margin:8px 0;" />`;
+          }
+          return line
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+        });
+        terminal.innerHTML = htmlLines.join('<br>');
+      }
+
+      function show(key) {
+        var lines = contentMap[key] || ['> unknown command'];
+        terminal.hidden = false;
+        cancelTyping();
+        clearTerminal();
+        typeLines(lines, linkify);
+        terminal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      navLinks.forEach(link => {
+        link.onclick = e => { e.preventDefault(); show(link.dataset.target); };
+      });
+
+      document.querySelectorAll('.links a[href]:not([data-target]):not([href^="mailto:"])').forEach(link => {
+        link.target = '_blank';
+        link.rel = 'noopener';
+      });
+
+      const hash = location.hash.slice(1);
+      if (hash && contentMap[hash]) show(hash);
+    })();
+</script>
+
+
+
+
+
+
+
+  <!-- <script>
+    (function () {
+      // Image loading and tagline
+      var hero = document.querySelector('.head img');
+      var tagEl = document.querySelector('.tag');
+
+      if (hero && hero.complete) hero.classList.add('loaded'), hero.classList.remove('blur');
+      else if (hero) hero.onload = () => (hero.classList.add('loaded'), hero.classList.remove('blur'));
+
+      if (tagEl) tagEl.innerHTML = 'Postdoctoral researcher at University of Hertfordshire<br>Reserach Field: Brown Dwarf and Exoplanet Atmosphere Characterization';
+
+      var terminal = document.getElementById('terminal');
+      var navLinks = document.querySelectorAll('.links a[data-target]');
+      var allTopLinks = document.querySelectorAll('.links a');
+      var isTyping = false;
+      var typingTimeout = null;
+      var typingToken = 0; // increments to cancel in-flight typing
+
+      var contentMap = {
+        // research: [
+        //   '> open research',
+        //   '',
+        //   'I dislike pushing people. I am looking for:',
+        //   '- Highly SELF-MOTIVATED students',
+        //   '- Want to do something fun where I can contribute',
+        //   '- Open to a brief trial (~3 months) before committing',
+        //   '',
+        //   'To start, email three standout achievements and why you fit.'
+        // ],
+
+          research: [
+            '> open research',
+            '',
+            'Research highlights',
+            '',
+
+            // ---- 1 ----
+            '1. Detecting Surface Biosignatures on Earth-like Exoplanets',
+            'The vegetation red edge (VRE) is a distinct spectral signature produced by terrestrial',
+            'photosynthetic vegetation and represents one of the most promising remotely detectable surface biosignatures.',
+            'We investigated the diurnal variability of disk-integrated VRE signals for Earth and Earth analogs under a range of viewing geometries. This work outlines observational strategies to enhance VRE detectability for future direct-imaging missions and demonstrates feasibility through mock observations.',
+            'IMG:biosignature.jpeg',
+            'Credit: Aaron Gronstal',
+            '',
+
+            // ---- 2 ----
+            '2. Inferring Atmospheric and Surface Properties of Earth Analogs via Retrievals',
+            'Direct-imaging spectra contain rich information about the atmospheres and surfaces of Earth analogs.',
+            'Using a LUVOIR-like mission concept (now HWO), we showed that combining UV (R ~ 6) and visible',
+            '(R ~ 140) flux spectra enables robust constraints on wavelength-dependent surface albedo and water cloud properties. This study demonstrates the diagnostic power of low–moderate-resolution UV-optical direct-imaging spectra for Earth-like exoplanet characterization.',
+            'IMG:Earth-like_planets_retrieval.png',
+            'SOURCE: ADAPTED FROM H.B. SMITH & C. MATHIS',
+            '',
+
+            // ---- 3 ----
+            '3. Thermal-Emission Spectropolarimetry of Brown Dwarfs',
+            'Emission spectroscopy is central to brown dwarf and exoplanet atmospheric studies,',
+            'but flux-only interpretations often suffer from degeneracies among temperature structure,',
+            'chemical composition, and cloud properties.',
+            'Thermal-emission spectropolarimetry provides complementary sensitivity to these features.',
+            'We quantified how temperature structures and cloud scattering properties shape polarization',
+            'spectra. Broadband polarization is dominated by cloud optical thickness, while a distinct',
+            'two-peak structure traces cloud particle sizes.',
+            'Narrow polarization features in molecular bands can probe local temperature gradients',
+            'near the photosphere. Future low-resolution (R ~ 100) spectropolarimeters at 1–2 μm with sensitivities ≤ 10⁻⁵ could detect these signatures and break degeneracies inherent to flux-only retrievals.',
+            'IMG:polarization.png',
+            '',
+
+            // ---- 4 ----
+            '4. Time-Resolved Retrievals for Spectral Variability',
+            'Brown dwarfs and exoplanets exhibit complex atmospheric phenomena such as clouds, storms,',
+            'and chemical inhomogeneities, which drive strong spectral variability.',
+            'JWST time-series spectroscopy now provides unprecedented data for studying these processes.',
+            'We are developing Tempawral, a data-driven, time-resolved atmospheric retrieval framework',
+            'based on eigen-spectra inversion, enabling robust and generalizable time-resolved',
+            'atmospheric characterization in the JWST era.',
+            'IMG:auroral_object.png',
+            'Artwork: NASA, ESA, CSA, Leah Hustak (STScI)',
+            '',
+
+            // ---- 5 ----
+            '5. Variability Mechanisms of the Auroral Brown Dwarf LSR J1835+3259',
+            'We analyzed 81 JWST/NIRISS-SOSS spectra (1–2.8 μm) of the auroral brown dwarf',
+            'LSR J1835+3259, performing retrievals on maximum and minimum variability states.',
+            'Variability arises from a combination of auroral-driven H⁻ chemistry changes, evolving',
+            'cloud vertical structure, and time-dependent alkali chemistry.',
+            'IMG:Tempawral_fig.png',
+            '',
+          ],
+
+        code: [
+          '> open code',
+          '',
+          '- Brewster_V2 - https://github.com/fwang23nh/brewster_v2',
+          '- Tempawral - https://github.com/fwang23nh/Tempawral',
+        ],
+        publications: [
+          '> open publications',
+          '',
+          'Wang, F., & He, J. (2021). <a href="https://iopscience.iop.org/article/10.3847/1538-4357/abd6ff/meta"><strong>Diurnal Variability and Detectability of Vegetation Red Edge of Earth-like Exoplanets</strong></a>. In <em>The Astrophysical Journal, 909(1), 9.</em></li>',
+          'Wang, F., Fujii, Y., & He, J. (2022). <a href="https://iopscience.iop.org/article/10.3847/1538-4357/ac67e5/meta"><strong>Unveiling Nongray Surface of Cloudy Exoplanets: The Influence of Wavelength-dependent Surface Albedo and Cloud Scattering Properties on Retrieval Solutions.</strong></a> In <em>The Astrophysical Journal, 931(1), 48.</em></li>',
+          'Wang, F., Fujii, Y., et al. (2025). <strong>On the use of polarized thermal emission to constrain cloud grain size and temperature structure of sub-stellar objects.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Wang, F., Ben, B., et al. (2025). <strong><code>Tempawral</code>: A Time-Resolved Retrieval Framework for Variable Brown Dwarfs and Exoplanet.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Wang, F., Ben, B., et al. (2025). <strong>Exploring Auroral Heating and Chemistry on a M Dwarf Using JWST/NIRISS-SOSS Time-Series Spectroscopy I: Retrieving on Extreme Amplitudes Spectra.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Wang, F., Ben, B., et al. (2025). <strong>Exploring Auroral Heating and Chemistry on an M Dwarf Using JWST/NIRISS-SOSS Time-Series Spectroscopy II: Eigen spectra retrievals with Tempawral.</strong> Manuscript submitted for publication in <em>MNRAS</em>.</li>',
+          'Akhmetshyn, R., Artigau, É., Cowan, N. B., Plummer, M. K., <strong>Wang, F.</strong>, Burningham, B., ... & Rowe, J. F. (2025). <a href="https://iopscience.iop.org/article/10.3847/1538-4357/ae046d/meta"><strong>Mapping atmospheric features of the planetary-mass brown dwarf SIMP 0136 with JWST NIRISS</strong></a>. In <em>The Astrophysical Journal, 993(2), 237.</em></li>',
+           '',
+        ],
+
+        email: [
+          '> open email',
+          '',
+          '- fwang23nh (at) gmail (dot) com',
+          '- fwang5(at) herts (dot) ac (dot) uk'
+        ]
+      };
+
+      function clearTerminal() { terminal.textContent = ''; }
+
+      function setNavDisabled(disabled) {
+        allTopLinks.forEach(link => {
+          link.classList.toggle('disabled', disabled);
+          disabled ? link.setAttribute('aria-disabled', 'true') : link.removeAttribute('aria-disabled');
+        });
+      }
+
+      function cancelTyping() {
+        typingToken++;
+        if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
+        isTyping = false;
+        setNavDisabled(false);
+      }
+
+      function typeLines(lines, done) {
+        isTyping = true;
+        setNavDisabled(true);
+        var i = 0, char = 0;
+        var myToken = ++typingToken;
+        function step() {
+          if (myToken !== typingToken) { return; }
+          if (i >= lines.length) { isTyping = false; setNavDisabled(false); if (myToken === typingToken && done) done(); return; }
+          var line = lines[i];
+          if (char < line.length) {
+            terminal.textContent += line.charAt(char);
+            char++;
+          } else {
+            terminal.textContent += '\n';
+            i++; char = 0;
+          }
+          terminal.scrollTop = terminal.scrollHeight;
+          typingTimeout = setTimeout(step, 4);
+        }
+        typingTimeout = setTimeout(step, 0);
+      }
+
+      // function linkify() {
+      //   var text = terminal.textContent;
+      //   var html = text
+      //     .replace(/&/g, '&amp;')
+      //     .replace(/</g, '&lt;')
+      //     .replace(/>/g, '&gt;')
+      //     .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1<\/a>');
+      //   terminal.innerHTML = html;
+      // }
+
+
+     function linkify() {
+        const lines = terminal.textContent.split('\n');
+
+        const htmlLines = lines.map(line => {
+          if (line.startsWith('IMG:')) {
+            const url = line.replace('IMG:', '').trim();
+            return `<img src="${url}" style="max-width:100%; border-radius:6px; margin:8px 0;" />`;
+          }
+          return line
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+        });
+
+        terminal.innerHTML = htmlLines.join('<br>');
+    }
+
+      function show(key) {
+        var lines = contentMap[key] || ['> unknown command'];
+        terminal.hidden = false;
+        cancelTyping();
+        clearTerminal();
+        typeLines(lines, linkify);
+        terminal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      navLinks.forEach(link => {
+        link.onclick = e => (e.preventDefault(), show(link.dataset.target));
+      });
+
+      document.querySelectorAll('.links a[href]:not([data-target]):not([href^="mailto:"])').forEach(link => {
+        link.target = '_blank';
+        link.rel = 'noopener';
+      });
+
+      const hash = location.hash.slice(1);
+      if (hash && contentMap[hash]) show(hash);
+    })();
+  </script> -->
+
+</body>
+
+</html>
